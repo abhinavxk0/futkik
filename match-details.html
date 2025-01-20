@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Match Details</title>
+    <link rel="stylesheet" href="/styling/match-details.css" />
+</head>
+
+<body>
+    <h1 id="title">12thMan</h1>
+    <div id="match-info">
+
+        <div class="match-card">
+            <!-- Team Logos and Names -->
+            <div class="match-teams">
+                <div class="team home-team">
+                    <img id="home-logo" src="" alt="Home Team Logo" />
+                    <p id="home-team-name"></p>
+                </div>
+
+                <div class="vs">
+                    <p>vs</p>
+                </div>
+
+                <div class="team away-team">
+                    <img id="away-logo" src="" alt="Away Team Logo" />
+                    <p id="away-team-name"></p>
+                </div>
+            </div>
+
+            <!-- Match Date and Time -->
+            <div class="match-time" id="match-time"></div>
+            <div class="competition" id="compcountry">
+                <img id="competition-emblem">
+                <p id="competition-name"></p>
+                <img id="countryflag"> </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const match = JSON.parse(localStorage.getItem("selectedMatch"));
+
+            if (match) {
+                // Set logos, names, and match time
+                const homeLogo = document.getElementById("home-logo");
+                const awayLogo = document.getElementById("away-logo");
+                const homeTeamName = document.getElementById("home-team-name");
+                const awayTeamName = document.getElementById("away-team-name");
+                const matchTime = document.getElementById("match-time");
+                const competitionlogo = document.getElementById("competition-emblem");
+                const countryflag = document.getElementById("countryflag");
+                const compname = document.getElementById("competition-name");
+                console.log(match);
+                homeLogo.src = (match.homeTeam.logo) ? match.homeTeam.logo : match.homeTeam.crest;
+                awayLogo.src = (match.awayTeam.logo) ? match.awayTeam.logo : match.awayTeam.crest;
+                homeTeamName.innerHTML = `<a href="https://www.w3schools.com" style="color: white; text-decoration: none;">${match.homeTeam.shortName} (${(match.status === "FINISHED" || match.status === "IN_PLAY")?match.score.fullTime.home:""})</a>`;
+                awayTeamName.innerHTML = `<a href="https://www.w3schools.com" style="color: white; text-decoration: none;">${match.awayTeam.shortName} (${(match.status === "FINISHED" || match.status === "IN_PLAY")?match.score.fullTime.away:""})</a>`;
+                const matchDate = new Date(match.utcDate);
+                const formattedDate = matchDate.toLocaleDateString('en-GB', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: '2-digit'
+                }) + ' at ' + matchDate.toLocaleTimeString('en-GB', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true
+                });
+                matchTime.textContent = formattedDate;
+                competitionlogo.src = match.competition.emblem;
+                countryflag.src = match.area.flag;
+                compname.textContent = match.competition.name;
+            } else {
+                document.body.innerHTML = "<p>No match data available.</p>";
+            }
+        });
+    </script>
+</body>
+
+</html>
