@@ -1,4 +1,3 @@
-const api_key = "Khiz#odDqrcSl4p1oA-+";
 // Check if the page is being loaded fresh or reloaded
 if (!sessionStorage.getItem("isReloaded")) {
     // If it's not reloaded, mark it as reloaded and set the redirect
@@ -47,19 +46,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (searchTerm) {
             try {
                 
-                const tresponse = await fetch(`https://api-server-dkr1.onrender.com/teams/search?name=${searchTerm}`,{
-                    method: 'GET',
-                    headers: {
-                        'x-api-key': api_key
-                    }
-                });
+                const tresponse = await fetch(`https://api-server-dkr1.onrender.com/teams/search?name=${searchTerm}`);
                 const teamData = await tresponse.json();
-                const cresponse = await fetch(`https://api-server-dkr1.onrender.com/competitions/search?name=${searchTerm}`,{
-                    method: 'GET',
-                    headers: {
-                        'x-api-key': api_key
-                    }
-                });
+                const cresponse = await fetch(`https://api-server-dkr1.onrender.com/competitions/search?name=${searchTerm}`);
                 const competitionData = await cresponse.json().then(
                     resultsContainer.innerHTML = ''
                 );
@@ -255,12 +244,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const resultsContainer = document.getElementById('search-results');
 
             if (matchesData.inplay != null) {
-                const response = await fetch(`https://api-server-dkr1.onrender.com/teams/${teamId}/matches`,{
-                    method: 'GET',
-                    headers: {
-                        'x-api-key': api_key
-                    }
-                });
+                const response = await fetch(`https://api-server-dkr1.onrender.com/teams/${teamId}/matches`);
                 const matchesData = await response.json();
                 const activematch = document.createElement('div');
                 const activematchbutton = document.createElement('button');
