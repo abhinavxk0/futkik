@@ -21,7 +21,7 @@ home.addEventListener('click', () => {
 document.addEventListener('DOMContentLoaded', async () => {
     const competitionsDiv = document.getElementById('competitions');
     const matchesDiv = document.getElementById('matches');
-    const upcomingMessage = document.getElementById('upcomingmatches');
+    const upcomingMessage = document.getElementById('search-results');
     const competitionMessage = document.getElementById('comps');
     const loadingMatches = document.getElementById('loadingmatches');
     const loadButton = document.getElementById('searchByCompetitions');
@@ -35,128 +35,129 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     searchbox.addEventListener('input', async () => {
         setTimeout(async () => {
-        const resultsContainer = document.getElementById('search-results');
-        resultsContainer.innerHTML = `<p style="font-family: Poppins, sans-serif;">
+            const resultsContainer = document.getElementById('search-results');
+            resultsContainer.innerHTML = `<p style="font-family: Poppins, sans-serif;">
         <img src="loading/loading.gif" alt="Loading" style="vertical-align: middle; height:48px"> 
         Loading teams and competitions...
       </p>
       `;
-        const searchTerm = document.getElementById('team-search-box').value.trim();
-    
-        if (searchTerm) {
-            try {
-                
-                const tresponse = await fetch(`https://api-server-dkr1.onrender.com/teams/search?name=${searchTerm}`);
-                const teamData = await tresponse.json();
-                const cresponse = await fetch(`https://api-server-dkr1.onrender.com/competitions/search?name=${searchTerm}`);
-                const competitionData = await cresponse.json().then(
-                    resultsContainer.innerHTML = ''
-                );
-    
-                // Create sections for teams and competitions
-                const teamsSection = document.createElement('div');
-                teamsSection.classList.add('results-section');
-                const compsSection = document.createElement('div');
-                compsSection.classList.add('results-section');
-    
-                // Display teams
-                if (teamData.length > 0) {
-                    const teamsList = document.createElement('ul');
-                    teamsList.classList.add('team-list');
-                    
-                    const displayTeams = (teams) => {
-                        teamsList.innerHTML = '';
-                        teams.forEach(team => {
-                            const listItem = document.createElement('li');
-                            listItem.classList.add('team-result');
-    
-                            const crestImg = document.createElement('img');
-                            crestImg.src = team.crest || 'default.png';
-                            crestImg.alt = `${team.name} Crest`;
-                            crestImg.style.width = '30px';
-                            crestImg.style.height = '30px';
-                            listItem.appendChild(crestImg);
-    
-                            const teamNameElement = document.createElement('span');
-                            teamNameElement.textContent = team.name;
-                            listItem.appendChild(teamNameElement);
-    
-                            listItem.addEventListener('click', () => fetchTeamDetails(team.id));
-                            teamsList.appendChild(listItem);
-                        });
-                    };
-    
-                    displayTeams(teamData.slice(0, 5));
-                    teamsSection.appendChild(teamsList);
-    
-                    if (teamData.length > 5) {
-                        const moreTeamsBtn = document.createElement('button');
-                        moreTeamsBtn.textContent = 'More Teams';
-                        moreTeamsBtn.classList.add('more-button');
-                        moreTeamsBtn.addEventListener('click', () => {
-                            displayTeams(teamData);
-                            moreTeamsBtn.remove();
-                        });
-                        teamsSection.appendChild(moreTeamsBtn);
+            const searchTerm = document.getElementById('team-search-box').value.trim();
+
+            if (searchTerm) {
+                try {
+
+                    const tresponse = await fetch(`https://api-server-dkr1.onrender.com/teams/search?name=${searchTerm}`);
+                    const teamData = await tresponse.json();
+                    const cresponse = await fetch(`https://api-server-dkr1.onrender.com/competitions/search?name=${searchTerm}`);
+                    const competitionData = await cresponse.json().then(
+                        resultsContainer.innerHTML = ''
+                    );
+
+                    // Create sections for teams and competitions
+                    const teamsSection = document.createElement('div');
+                    teamsSection.classList.add('results-section');
+                    const compsSection = document.createElement('div');
+                    compsSection.classList.add('results-section');
+
+                    // Display teams
+                    if (teamData.length > 0) {
+                        const teamsList = document.createElement('div');
+                        teamsList.classList.add('team-list');
+
+                        const displayTeams = (teams) => {
+                            teamsList.innerHTML = '';
+                            teams.forEach(team => {
+                                const button = document.createElement('button');
+                                button.classList.add('team-result');
+
+                                const crestImg = document.createElement('img');
+                                crestImg.src = team.crest || 'default.png';
+                                crestImg.alt = `${team.name} Crest`;
+                                crestImg.style.width = '30px';
+                                crestImg.style.height = '30px';
+                                button.appendChild(crestImg);
+
+                                const teamNameElement = document.createElement('span');
+                                teamNameElement.textContent = team.name;
+                                button.appendChild(teamNameElement);
+
+                                button.addEventListener('click', () => fetchTeamDetails(team.id));
+                                teamsList.appendChild(button);
+                            });
+                        };
+
+                        displayTeams(teamData.slice(0, 5));
+                        teamsSection.appendChild(teamsList);
+
+                        if (teamData.length > 5) {
+                            const moreTeamsBtn = document.createElement('button');
+                            moreTeamsBtn.textContent = 'More Teams';
+                            moreTeamsBtn.classList.add('more-button');
+                            moreTeamsBtn.addEventListener('click', () => {
+                                displayTeams(teamData);
+                                moreTeamsBtn.remove();
+                            });
+                            teamsSection.appendChild(moreTeamsBtn);
+                        }
                     }
-                }
-    
-                // Display competitions
-                if (competitionData.length > 0) {
-                    const compsList = document.createElement('ul');
-                    compsList.classList.add('team-list');
+
+                    // Display competitions
+                    if (competitionData.length > 0) {
+                        const compsList = document.createElement('div');
+                        compsList.classList.add('team-list');
                     
-                    const displayComps = (competitions) => {
-                        compsList.innerHTML = '';
-                        competitions.forEach(comp => {
-                            const listItem = document.createElement('li');
-                            listItem.classList.add('team-result');
-    
-                            const emblemImg = document.createElement('img');
-                            emblemImg.src = comp.emblem || 'default.png';
-                            emblemImg.alt = `${comp.name} Emblem`;
-                            emblemImg.style.width = '30px';
-                            emblemImg.style.height = '30px';
-                            listItem.appendChild(emblemImg);
-    
-                            const compNameElement = document.createElement('span');
-                            compNameElement.textContent = comp.name;
-                            listItem.appendChild(compNameElement);
-    
-                            listItem.addEventListener('click', () => fetchMatches(comp.id));
-                            compsList.appendChild(listItem);
-                        });
-                    };
-    
-                    displayComps(competitionData.slice(0, 5));
-                    compsSection.appendChild(compsList);
-    
-                    if (competitionData.length > 5) {
-                        const moreCompsBtn = document.createElement('button');
-                        moreCompsBtn.textContent = 'More Competitions';
-                        moreCompsBtn.classList.add('more-button');
-                        moreCompsBtn.addEventListener('click', () => {
-                            displayComps(competitionData);
-                            moreCompsBtn.remove();
-                        });
-                        compsSection.appendChild(moreCompsBtn);
+                        const displayComps = (competitions) => {
+                            compsList.innerHTML = '';
+                            competitions.forEach(comp => {
+                                const button = document.createElement('button');
+                                button.classList.add('team-result');
+                    
+                                const emblemImg = document.createElement('img');
+                                emblemImg.src = comp.emblem || 'default.png';
+                                emblemImg.alt = `${comp.name} Emblem`;
+                                emblemImg.style.width = '30px';
+                                emblemImg.style.height = '30px';
+                                button.appendChild(emblemImg);
+                    
+                                const compNameElement = document.createElement('span');
+                                compNameElement.textContent = comp.name;
+                                button.appendChild(compNameElement);
+                    
+                                button.addEventListener('click', () => fetchMatches(comp.id));
+                                compsList.appendChild(button);
+                            });
+                        };
+
+                        displayComps(competitionData.slice(0, 5));
+                        compsSection.appendChild(compsList);
+
+                        if (competitionData.length > 5) {
+                            const moreCompsBtn = document.createElement('button');
+                            moreCompsBtn.textContent = 'More Competitions';
+                            moreCompsBtn.classList.add('more-button');
+                            moreCompsBtn.addEventListener('click', () => {
+                                displayComps(competitionData);
+                                moreCompsBtn.remove();
+                            });
+                            compsSection.appendChild(moreCompsBtn);
+                        }
                     }
+
+                    // Add sections to results container
+                    if (teamData.length > 0) resultsContainer.appendChild(teamsSection);
+                    if (competitionData.length > 0) resultsContainer.appendChild(compsSection);
+
+                    // Show message if no results found
+                    if (teamData.length === 0 && competitionData.length === 0) {
+                        resultsContainer.innerHTML = '<p>No results found!</p>';
+                    }
+
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                    resultsContainer.innerHTML = '<p>Error loading results</p>';
                 }
-    
-                // Add sections to results container
-                if (teamData.length > 0) resultsContainer.appendChild(teamsSection);
-                if (competitionData.length > 0) resultsContainer.appendChild(compsSection);
-                
-                // Show message if no results found
-                if (teamData.length === 0 && competitionData.length === 0) {
-                    resultsContainer.innerHTML = '<p>No results found!</p>';
-                }
-    
-            } catch (error) {
-                console.error('Error fetching data:', error);
-                resultsContainer.innerHTML = '<p>Error loading results</p>';
             }
-        }}, 1000);
+        }, 1000);
     });
 
 
@@ -432,31 +433,37 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     async function fetchMatches(competitionId) {
         try {
-            upcomingMessage.innerHTML = `<p style="font-family: Poppins, sans-serif;">
-            <img src="loading/loading.gif" alt="Loading" style="vertical-align: middle; height:48px"> 
-            Loading matches...
-          </p>
-          `;
+            upcomingMessage.innerHTML = `
+                <p style="font-family: Poppins, sans-serif;">
+                    <img src="loading/loading.gif" alt="Loading" style="vertical-align: middle; height:48px"> 
+                    Loading matches...
+                </p>
+            `;
             const response = await fetch(`https://api-server-dkr1.onrender.com/matches/${competitionId}`);
             const data = await response.json();
-
-            if (data.matches == 'No upcoming matches.') {
-                upcomingMessage.textContent = 'No upcoming matches for this competition.';
+            console.log(`Competition match data: ${data}`);
+    
+            if (data.matches === 'No upcoming matches.') {
+                upcomingMessage.innerHTML = 'No upcoming matches for this competition.';
             } else {
-                upcomingMessage.textContent = "✦ Upcoming Matches ✦";
+                upcomingMessage.innerHTML = "✦ Upcoming Matches ✦";
                 matchesDiv.innerHTML = '';
+    
                 if (data.message) {
                     const noMatchesMessage = document.createElement('p');
                     noMatchesMessage.textContent = data.message;
                     matchesDiv.appendChild(noMatchesMessage);
                     return;
                 }
-
-                loadingMatches.textContent = '';
-
+    
+                if (loadingMatches) {
+                    loadingMatches.textContent = '';
+                }
+    
                 data.forEach(match => {
                     const matchButton = document.createElement('button');
                     matchButton.classList.add('match-button');
+    
                     const matchDate = new Date(match.utcDate);
                     const formattedDate = matchDate.toLocaleDateString('en-GB', {
                         day: '2-digit',
@@ -467,31 +474,31 @@ document.addEventListener('DOMContentLoaded', async () => {
                         minute: '2-digit',
                         hour12: true
                     });
+    
                     matchButton.innerHTML = `
-                            <div class="match-info">
+                        <div class="match-info">
                             <img src="${match.homeTeam.logo || 'default.png'}" alt="Home Team Logo">
                             <div class="match-teams">
-                            <p><strong>${match.homeTeam.shortName}</strong></p>
-                            <p><strong>vs</strong></p>
-                            <p><strong>${match.awayTeam.shortName}</strong></p>
+                                <p><strong>${match.homeTeam.shortName}</strong></p>
+                                <p><strong>vs</strong></p>
+                                <p><strong>${match.awayTeam.shortName}</strong></p>
                             </div>
                             <img src="${match.awayTeam.logo || 'default.png'}" alt="Away Team Logo">
-                            </div>
-                            <p class="match-time"><strong>${formattedDate}</strong></p>
+                        </div>
+                        <p class="match-time"><strong>${formattedDate}</strong></p>
                     `;
-
+    
                     matchButton.onclick = () => {
                         localStorage.setItem('selectedMatch', JSON.stringify(match));
                         window.location.href = 'match-details.html';
                     };
-
+    
                     matchesDiv.appendChild(matchButton);
-                })
+                });
             }
-
         } catch (error) {
             console.error('Error fetching matches:', error.message);
-            upcomingMessage.textContent = 'Error loading matches.';
+            upcomingMessage.innerHTML = 'Error loading matches.';
         }
     }
 });
