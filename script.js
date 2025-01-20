@@ -162,19 +162,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     async function fetchTeamDetails(teamId) {
         try {
-            const response = await fetch(`https://api-server-dkr1.onrender.com/teams/${teamId}`,{
-                method: 'GET',
-                headers: {
-                    'x-api-key': api_key
-                }
-            });
+            const response = await fetch(`https://api-server-dkr1.onrender.com/teams/${teamId}`);
             const teamDetails = await response.json();
-            const res = await fetch(`https://api-server-dkr1.onrender.com/teams/${teamId}/matches`,{
-                method: 'GET',
-                headers: {
-                    'x-api-key': api_key
-                }
-            });
+            const res = await fetch(`https://api-server-dkr1.onrender.com/teams/${teamId}/matches`);
             const matchesData = await res.json();
             const resultsContainer = document.getElementById('search-results');
             resultsContainer.innerHTML = ''; // Clear previous results
@@ -234,12 +224,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     async function fetchTeamMatches(teamId) {
         try {
-            const response = await fetch(`https://api-server-dkr1.onrender.com/teams/${teamId}/matches`,{
-                method: 'GET',
-                headers: {
-                    'x-api-key': api_key
-                }
-            });
+            const response = await fetch(`https://api-server-dkr1.onrender.com/teams/${teamId}/matches`);
             const matchesData = await response.json();
             const resultsContainer = document.getElementById('search-results');
 
@@ -256,12 +241,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     hour12: true
                 });
                 const func = async () => {
-                    const response = await fetch(`https://api-server-dkr1.onrender.com/teams/${teamId}/matches`,{
-                        method: 'GET',
-                        headers: {
-                            'x-api-key': api_key
-                        }
-                    });
+                    const response = await fetch(`https://api-server-dkr1.onrender.com/teams/${teamId}/matches`);
                     const matchesData = await response.json();
                     activematchbutton.innerHTML = `
                 <div class="team-match-info-active">
@@ -457,12 +437,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             Loading matches...
           </p>
           `;
-            const response = await fetch(`https://api-server-dkr1.onrender.com/matches/${competitionId}`,{
-                method: 'GET',
-                headers: {
-                    'x-api-key': api_key
-                }
-            });
+            const response = await fetch(`https://api-server-dkr1.onrender.com/matches/${competitionId}`);
             const data = await response.json();
 
             if (data.matches == 'No upcoming matches.') {
